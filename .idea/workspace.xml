@@ -2,28 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a30d702f-3321-4c3e-9cca-89af6d1e5ddc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/5.5.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.5.1/executionHistory/executionHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/5.5.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.5.1/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/5.5.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.5.1/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/5.5.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.5.1/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/hsm_mpp_lib_jvm_0_0_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/hsm_mpp_lib_jvm_0_0_1.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/com.example.hsm-mpp-lib.iosTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/com.example.hsm-mpp-lib.iosTest.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/com.example.hsm-mpp-lib.jvmTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/com.example.hsm-mpp-lib.jvmTest.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle 2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/Action.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/Action.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/State.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/State.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/StateMachine.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/StateMachine.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmTest/java/BasicStateMachineTest.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmTest/kotlin/sample/BasicStateMachineTest.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/iosMain/kotlin/ConcurrentLinkedQueue.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/iosMain/kotlin/ConcurrentLinkedQueue.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -244,7 +224,7 @@
       <workItem from="1575969084264" duration="7871000" />
       <workItem from="1575980744759" duration="2409000" />
       <workItem from="1575984113886" duration="2753000" />
-      <workItem from="1575987187448" duration="310000" />
+      <workItem from="1575987187448" duration="685000" />
     </task>
     <servers />
   </component>

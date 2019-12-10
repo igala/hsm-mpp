@@ -4,8 +4,12 @@ import platform.Foundation.NSRecursiveLock
 actual class ConcurrentLinkedQueue<E>{
     private lateinit var lock: NSRecursiveLock
     lateinit var queue:MutableList<E>
+    init {
+        queue = listOf<E>() as MutableList<E>
+        lock = NSRecursiveLock()
+    }
     actual open fun add(element:E):Boolean{
-        lock =NSRecursiveLock()
+
         lock.lock()
         queue.add(element)
         lock.unlock()
