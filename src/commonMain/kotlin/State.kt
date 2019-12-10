@@ -14,15 +14,27 @@ open class State<T : State<T>>(id: String) {
         }
 
     }
-    val id: String
+    var id: String
     private var mOnEnterAction: Action? = null
     private var mOnExitAction: Action? = null
-    private  var mHandlers: HashMap<String, MutableList<Handler>>
+    private  var mHandlers: HashMap<String, MutableList<Handler?>?> = HashMap<String, MutableList<Handler?>?>()
     internal var owner: StateMachine? = null
     protected open fun getThis(): T
     {
             return this as T
     }
+
+    init {
+        this.id = id
+    }
+
+    companion object {
+        fun <T: State<T>> createInstance(id:String) = State<T>(id)
+    }
+//    public static fun <T: State<T>> createInstance(id:String): State<T> {
+//        return State(id)
+//    }
+
 
     open fun setOwner(ownerMachine: StateMachine) {
         owner = ownerMachine
@@ -45,7 +57,7 @@ open class State<T : State<T>>(id: String) {
         }
 
     init {
-        mHandlers = HashMap<String, MutableList<Handler>>()//LinkedListMultimap.create()
+        //LinkedListMultimap.create()
         this.id = id
     }
 
@@ -132,8 +144,8 @@ open class State<T : State<T>>(id: String) {
     }
 
     internal fun findHandler(event: Event): Handler? {
-        for (handler in mHandlers.get(event.name) as MutableList<Handler>) {
-            if (handler.evaluate(event)) {
+        for (handler in mHandlers[event.name].orEmpty() ) {
+            if (handler!!.evaluate(event)) {
                 return handler
             }
         }

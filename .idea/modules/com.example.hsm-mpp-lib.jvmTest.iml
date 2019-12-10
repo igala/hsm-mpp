@@ -5,9 +5,9 @@
       <configuration version="3" platform="JVM 1.6" allPlatforms="JVM [1.6]" useProjectSettings="false" isTestModule="true" externalProjectId="hsm-mpp-lib">
         <dependsOnModuleNames>hsm-mpp-lib_commonTest</dependsOnModuleNames>
         <sourceSets>
-          <sourceSet>com.example.hsm-mpp-lib.commonMain</sourceSet>
-          <sourceSet>com.example.hsm-mpp-lib.jvmMain</sourceSet>
           <sourceSet>com.example.hsm-mpp-lib.commonTest</sourceSet>
+          <sourceSet>com.example.hsm-mpp-lib.jvmMain</sourceSet>
+          <sourceSet>com.example.hsm-mpp-lib.commonMain</sourceSet>
         </sourceSets>
         <newMppModelJpsModuleKind>COMPILATION_AND_SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
         <externalSystemTestTasks>jvmTest|hsm-mpp-lib:jvmTest|jvm</externalSystemTestTasks>

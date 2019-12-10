@@ -50,7 +50,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
     }
 
     init {
-        mStateList.addAll((states) as Collection<State<*>>)
+        mStateList.addAll(listOf(*states) as Collection<State<*>>)
         mStateList.add(initialState!!)
         mInitialState = initialState
         setOwner()
@@ -93,6 +93,10 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
             mEventQueueInProgress = false
             processEventQueue()
         }
+    }
+
+    fun init(){
+        init(HashMap<String, Any>())
     }
 
     internal fun teardown(payload: Map<String?, Any?>?) {
@@ -271,4 +275,6 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
         }
         return this
     }
+
+
 }

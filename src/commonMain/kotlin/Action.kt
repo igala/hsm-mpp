@@ -5,6 +5,7 @@ abstract class Action() {
     protected var mNextState: State<*>? = null
 
     protected var mPayload: Map<String?, Any?>? = null
+
     abstract fun run()
     fun setPreviousState(state: State<*>?) {
         mPreviousState = state

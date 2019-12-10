@@ -1,0 +1,6 @@
+framework module hsm_mpp_lib {
+    umbrella header "hsm_mpp_lib.h"
+
+    export *
+    module * { export * }
+}
