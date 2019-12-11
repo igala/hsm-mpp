@@ -2,10 +2,11 @@ package sample
 
 
 import de.artcom.hsm.*
-import org.jetbrains.annotations.Nullable
 import org.junit.Test
 import java.util.HashMap
 import org.mockito.Mockito.*
+import sample.helper.MyState
+
 class GuardTest {
     @Test
     fun testFirstGuard() {

@@ -4,11 +4,11 @@ import de.artcom.hsm.Parallel
 import de.artcom.hsm.StateMachine
 import de.artcom.hsm.Sub
 import org.hamcrest.CoreMatchers.hasItems
-import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.mockito.internal.matchers.Not
 import sample.helper.Logger
+import sample.helper.MyState
 
 
 class CustomLogStateMachineTest {

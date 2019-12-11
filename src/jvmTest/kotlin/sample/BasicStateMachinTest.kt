@@ -2,7 +2,6 @@ package sample
 
 import org.junit.Assert
 import org.junit.Test
-import org.mockito.InOrder
 import java.util.HashMap
 import de.artcom.hsm.Action
 import de.artcom.hsm.Parallel
@@ -12,7 +11,6 @@ import de.artcom.hsm.Sub
 import de.artcom.hsm.TransitionKind
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasItems
-import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.Matchers.equalTo
 import org.mockito.Mockito.inOrder
@@ -20,6 +18,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyZeroInteractions
 import org.mockito.internal.matchers.Not
+import sample.helper.MyState
 
 class BasicStateMachineTest {
     @Test

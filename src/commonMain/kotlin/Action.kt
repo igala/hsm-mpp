@@ -4,7 +4,7 @@ abstract class Action() {
     protected var mPreviousState: State<*>? = null
     protected var mNextState: State<*>? = null
 
-    protected var mPayload: Map<String?, Any?>? = null
+    protected var mPayload: MutableMap<String?, Any?>? = null
 
     abstract fun run()
     fun setPreviousState(state: State<*>?) {
@@ -16,6 +16,6 @@ abstract class Action() {
     }
 
     fun setPayload(payload: Map<String?, Any?>?) {
-        mPayload = payload
+        mPayload = payload as MutableMap<String?, Any?>
     }
 }

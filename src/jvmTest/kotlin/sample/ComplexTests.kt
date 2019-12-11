@@ -6,6 +6,7 @@ import de.artcom.hsm.StateMachine
 import de.artcom.hsm.Sub
 import org.junit.Before
 import org.junit.Test
+import sample.helper.MyState
 
 class ComplexTests {
     private var a1: State<*>? = null
@@ -37,9 +38,9 @@ class ComplexTests {
         b2 = Sub("b2", b21, b22)
         b = Sub("b", b1, b2)
         c11 = MyState("c11")
-        c12 =MyState("c12")
+        c12 = MyState("c12")
         c21 = MyState("c21")
-        c22 =MyState("c22")
+        c22 = MyState("c22")
         c1Machine = StateMachine(c11, c12)
         c2Machine = StateMachine(c21, c22)
         c = Parallel("c", c1Machine, c2Machine)
