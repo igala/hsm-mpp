@@ -40,8 +40,8 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
     val allActiveStates: List<State<*>>
         get() {
             val stateList = ArrayList<State<*>>()
-            stateList.add(mCurrentState!!)
-            stateList.addAll(mCurrentState!!.allActiveStates)
+            mCurrentState?.let { stateList.add(it) }
+            mCurrentState?.allActiveStates?.let { stateList.addAll(it) }
             return stateList
         }
 
@@ -194,14 +194,14 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
     }
 
     private fun switchState(previousState: State<*>?, nextState: State<*>?, action: Action?, payload: Map<String?, Any?>?) {
-        exitState(previousState, nextState, payload as HashMap<String?, Any?>?)
+        exitState(previousState, nextState, payload)
             if (action != null) {
                     executeAction(action, previousState, nextState, payload)
             }
         enterState(previousState, nextState, payload)
     }
 
-    internal fun enterState(previousState: State<*>?, targetState: State<*>?, payload: HashMap<String?, Any?>?) {
+    internal fun enterState(previousState: State<*>?, targetState: State<*>?, payload: Map<String?, Any?>?) {
         val targetLevel = targetState?.owner?.path?.size
         val localLevel = path.size!!
         var nextState: State<*>? = null
@@ -232,7 +232,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
         return targetOwner?.path!!.get(localLevel)
     }
 
-    private fun exitState(previousState: State<*>?, nextState: State<*>?, payload: HashMap<String?, Any?>?) {
+    private fun exitState(previousState: State<*>?, nextState: State<*>?, payload: Map<String?, Any?>?) {
         mCurrentState?.exit(previousState, nextState, payload)
     }
 
