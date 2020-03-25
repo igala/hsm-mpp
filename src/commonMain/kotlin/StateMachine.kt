@@ -1,5 +1,7 @@
 package de.artcom.hsm
 
+import co.touchlab.stately.isolate.IsolateState
+
 //import java.util.ArrayList
 //import java.util.Arrays
 //import java.util.HashMap
@@ -182,8 +184,8 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
             val stateMachine = findNextStateMachineOnPathTo(targetState)
             stateMachine.switchState(previousState, targetState, action, event.payload)
         } else if (targetState?.descendantStates!!.contains(previousState)) {
-            val targetLevel = targetState.owner?.path!!.size
-            val stateMachine = path.get(targetLevel)
+            val targetLevel = targetState.owner?.access {  it.path!!.size}
+            val stateMachine = path.get(targetLevel!!)
             stateMachine.switchState(previousState, targetState, action, event.payload)
         } else if (previousState.equals(targetState)) {
             //TODO: clarify desired behavior for local transition on self
@@ -202,7 +204,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
     }
 
     internal fun enterState(previousState: State<*>?, targetState: State<*>?, payload: Map<String?, Any?>?) {
-        val targetLevel = targetState?.owner?.path?.size
+        val targetLevel = targetState?.owner?.access { it.path?.size }
         val localLevel = path.size!!
         var nextState: State<*>? = null
             if (targetLevel != null) {
@@ -229,7 +231,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
     private fun findNextStateMachineOnPathTo(targetState: State<*>?): StateMachine {
         val localLevel = path.size
         val targetOwner = targetState?.owner
-        return targetOwner?.path!!.get(localLevel)
+        return targetOwner?.access { it.path!!.get(localLevel)}!!
     }
 
     private fun exitState(previousState: State<*>?, nextState: State<*>?, payload: Map<String?, Any?>?) {
@@ -238,7 +240,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
 
     private fun setOwner() {
         for (state in mStateList) {
-            state.owner = this
+            state.owner = IsolateState{this}
         }
     }
 
@@ -260,7 +262,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
         if (targetState?.owner == null) {
             throw IllegalStateException(name + " Target state '" + targetState?.id + "' is not contained in state machine model.")
         }
-        val targetPath = targetState.owner?.path
+        val targetPath = targetState.owner?.access { it.path}
         val size = path.size
         for (i in 1 until size) {
             try {

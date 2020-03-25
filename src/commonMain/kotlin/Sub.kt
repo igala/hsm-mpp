@@ -1,5 +1,7 @@
 package de.artcom.hsm
 
+import co.touchlab.stately.isolate.IsolateState
+
 //import java.util.*
 
 class Sub : State<Sub> {
@@ -45,8 +47,8 @@ class Sub : State<Sub> {
     }
 
     override fun setOwner(ownerMachine: StateMachine) {
-        super.owner = ownerMachine
-        mSubMachine.name = owner!!.name
+        super.owner = IsolateState{ ownerMachine}
+        mSubMachine.name = owner!!.access { it.name }
     }
 
     override val descendantStates: Collection<out State<*>>

@@ -2,6 +2,9 @@ package de.artcom.hsm
 
 import co.touchlab.stately.collections.IsoMutableList
 import co.touchlab.stately.collections.IsoMutableMap
+import co.touchlab.stately.concurrency.AtomicReference
+import co.touchlab.stately.freeze
+import co.touchlab.stately.isolate.IsolateState
 
 //import com.google.common.collect.LinkedListMultimap
 //import java.util.*
@@ -18,10 +21,10 @@ open class State<T : State<T>>(id: String) {
 
     }
     var id: String
-    private var mOnEnterAction: Action? = null
-    private var mOnExitAction: Action? = null
+    private var mOnEnterAction: IsolateState<Action>? = null
+    private var mOnExitAction: IsolateState<Action>? = null
     private  var mHandlers: IsoMutableMap<String, IsoMutableList<Handler?>> = IsoMutableMap<String, IsoMutableList<Handler?>>()
-    internal var owner: StateMachine? = null
+    internal var owner: IsolateState<StateMachine>? = null
     protected open fun getThis(): T
     {
             return this as T
@@ -40,11 +43,11 @@ open class State<T : State<T>>(id: String) {
 
 
     open fun setOwner(ownerMachine: StateMachine) {
-        owner = ownerMachine
+        owner = IsolateState{ownerMachine}
     }
 
     open fun getOwner(): StateMachine? {
-        return owner
+        return owner?.access { it }
     }
     open val descendantStates: Collection<out State<*>>
         get() {
@@ -52,7 +55,7 @@ open class State<T : State<T>>(id: String) {
         }
     val eventHandler: EventHandler
         get() {
-            return owner?.path!!.get(0)
+            return owner?.access {  it.path.get(0) as EventHandler}!!
         }
     open val allActiveStates: List<State<*>>
         get() {
@@ -69,12 +72,12 @@ open class State<T : State<T>>(id: String) {
     }
 
     fun onEnter(onEnterAction: Action): T {
-        mOnEnterAction = onEnterAction
+        mOnEnterAction = IsolateState{onEnterAction}
         return getThis()
     }
 
     fun onExit(onExitAction: Action): T {
-        mOnExitAction = onExitAction
+        mOnExitAction = IsolateState {onExitAction}
         return getThis()
     }
 
@@ -135,22 +138,22 @@ open class State<T : State<T>>(id: String) {
     }
 
     open fun enter(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>?) {
-        LOGGER.debug("[" + owner?.name + "] " + id + " - enter")
+        LOGGER.debug("[" + owner?.access {  it.name } + "] " + id + " - enter")
         if (mOnEnterAction != null) {
-            mOnEnterAction?.setPreviousState(prev)
-            mOnEnterAction?.setNextState(next)
-            mOnEnterAction?.setPayload(payload)
-            mOnEnterAction?.run()
+            mOnEnterAction?.access {  it.setPreviousState(prev)}
+            mOnEnterAction?.access {  it.setNextState(next)}
+            mOnEnterAction?.access {  it.setPayload(payload)}
+            mOnEnterAction?.access {  it.run()}
         }
     }
 
     open fun exit(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>?) {
-        LOGGER.debug("[" + owner?.name + "] " + id + " - exit")
+        LOGGER.debug("[" + owner?.access { it.name } + "] " + id + " - exit")
         if (mOnExitAction != null) {
-            mOnExitAction?.setPreviousState(prev)
-            mOnExitAction?.setNextState(next)
-            mOnExitAction?.setPayload(payload)
-            mOnExitAction?.run()
+            mOnExitAction?.access {  it.setPreviousState(prev)}
+            mOnExitAction?.access {  it.setNextState(next)}
+            mOnExitAction?.access {  it.setPayload(payload)}
+            mOnExitAction?.access {  it.run()}
         }
     }
 
@@ -166,8 +169,8 @@ open class State<T : State<T>>(id: String) {
     open fun handleWithOverride(event: Event): Boolean {
         val handler = findHandler(event)
         if (handler != null) {
-            LOGGER.debug("[" + owner?.name + "] " + id + " - handle Event: " + event.name)
-            owner?.executeHandler(handler, event)
+            LOGGER.debug("[" + owner?.access { it.name } + "] " + id + " - handle Event: " + event.name)
+            owner?.access { it.executeHandler(handler, event)}
             return true
         }
         return false
