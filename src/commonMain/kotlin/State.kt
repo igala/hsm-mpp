@@ -1,5 +1,8 @@
 package de.artcom.hsm
 
+import co.touchlab.stately.collections.IsoMutableList
+import co.touchlab.stately.collections.IsoMutableMap
+
 //import com.google.common.collect.LinkedListMultimap
 //import java.util.*
 //import java.util.logging.Level
@@ -17,7 +20,7 @@ open class State<T : State<T>>(id: String) {
     var id: String
     private var mOnEnterAction: Action? = null
     private var mOnExitAction: Action? = null
-    private  var mHandlers: HashMap<String, MutableList<Handler?>?> = HashMap<String, MutableList<Handler?>?>()
+    private  var mHandlers: IsoMutableMap<String, IsoMutableList<Handler?>> = IsoMutableMap<String, IsoMutableList<Handler?>>()
     internal var owner: StateMachine? = null
     protected open fun getThis(): T
     {
@@ -78,7 +81,9 @@ open class State<T : State<T>>(id: String) {
     fun addHandler(eventName: String, target: State<*>, kind: TransitionKind, guard: Guard): T {
         var eventList = mHandlers.get(eventName)
         if(eventList==null) {
-            eventList = mutableListOf(Handler(target, kind, guard))
+            val list = IsoMutableList<Handler?>()
+            list.add(Handler(target, kind, guard))
+            eventList = list//mutableListOf(Handler(target, kind, guard))
 
         }
         else
@@ -90,7 +95,9 @@ open class State<T : State<T>>(id: String) {
     fun addHandler(eventName: String, target: State<*>, kind: TransitionKind, action: Action): T {
         var eventList = mHandlers.get(eventName)
         if(eventList==null) {
-            eventList = mutableListOf(Handler(target, kind, action))
+            val list = IsoMutableList<Handler?>()
+            list.add(Handler(target, kind, action))
+            eventList =  list   //(Handler(target, kind, action))
 
         }
         else
@@ -102,7 +109,9 @@ open class State<T : State<T>>(id: String) {
     fun addHandler(eventName: String, target: State<*>, kind: TransitionKind, action: Action, guard: Guard): T {
         var eventList = mHandlers.get(eventName)
         if(eventList==null) {
-            eventList = mutableListOf(Handler(target, kind, action, guard))
+            val list = IsoMutableList<Handler?>()
+            list.add(Handler(target, kind, action, guard))
+            eventList = list//mutableListOf(Handler(target, kind, action, guard))
 
         }
         else
@@ -114,7 +123,9 @@ open class State<T : State<T>>(id: String) {
     fun addHandler(eventName: String, target: State<*>, kind: TransitionKind): T {
         var eventList = mHandlers.get(eventName)
         if(eventList==null) {
-            eventList = mutableListOf( Handler(target, kind))
+            val list = IsoMutableList<Handler?>()
+            list.add(Handler(target, kind))
+            eventList = list//mutableListOf( Handler(target, kind))
 
         }
         else

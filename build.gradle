@@ -27,7 +27,7 @@ def BINTRAY_REPOSITORY='hsm-mpp-lib' // What you named your repository in bintra
 def ISSUE_URL= 'https://github.com/igala/hsm-mpp'// A link to an issue tracker for the library, in our example: "https://github.com/natanfudge/KotlinAwesomePrinter/issues"
 def SITE_URL='https://github.com/igala/hsm-mpp' // A link to the library's site. In our example: "https://github.com/natanfudge/KotlinAwesomePrinter"
 def VCS_URL='https://github.com/igala/hsm-mpp' // A link to the version control system (where the code is stored). In our example: "https://github.com/natanfudge/KotlinAwesomePrinter.git"
-def LIBRARY_VERSION_NAME='1.0.3' // The current version of your library. You will need to update this value whenever you upload a new release. For example: 1.0
+def LIBRARY_VERSION_NAME='1.0.5' // The current version of your library. You will need to update this value whenever you upload a new release. For example: 1.0
 
 
 
@@ -51,13 +51,20 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-                implementation 'co.touchlab:stately:0.9.6'
+                implementation 'co.touchlab:stately-concurrency:1.0.0-a2'
+                implementation 'co.touchlab:stately-common:1.0.0-a2'
+                implementation 'co.touchlab:stately-isolate:1.0.0-a2'
+                implementation 'co.touchlab:stately-iso-collections:1.0.0-a2'
             }
         }
         commonTest {
             dependencies {
-                implementation kotlin('test-common')
-                implementation kotlin('test-annotations-common')
+                implementation 'org.jetbrains.kotlin:kotlin-test-common'
+                implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+
+//                implementation "co.touchlab:testhelp:0.3.3"
+                //implementation kotlin('test-common')
+                //implementation kotlin('test-annotations-common')
             }
         }
         jvmMain {
@@ -86,6 +93,7 @@ kotlin {
         iosMain {
         }
         iosTest {
+
         }
     }
 }
@@ -138,7 +146,7 @@ bintray {
     key = getBintrayApiKeyProperty()
     //f you set publish to true, the new version will be published the moment you upload to bintray. If false, it will not be published unless you press the publish button on the bintray web.
     // It is recommended that you make it false because it can prevent an accident that you accidentally release the latest version.
-    publish = false
+    publish = true
 
     pkg {
         repo = BINTRAY_REPOSITORY
