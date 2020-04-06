@@ -1,37 +1,38 @@
 package de.artcom.hsm
 
+import co.touchlab.stately.concurrency.AtomicReference
 import co.touchlab.stately.isolate.IsolateState
 
 //import java.util.*
 
 class Sub : State<Sub> {
-    private val mSubMachine: StateMachine
+    private val mSubMachine: AtomicReference<StateMachine?> = AtomicReference(null)
     override fun getThis(): Sub {
         return this
     }
 
     constructor(id: String?, subMachine: StateMachine) : super(id!!) {
-        mSubMachine = subMachine
-        mSubMachine.container = this
+        mSubMachine.set(subMachine)
+        mSubMachine.get()?.container!!.set(this)
     }
 
     constructor(id: String?, initialState: State<*>?, vararg states: State<*>?) : super(id!!) {
-        mSubMachine = StateMachine(initialState, *states)
-        mSubMachine.container = this
+        mSubMachine.set(StateMachine(initialState, *states))
+        mSubMachine.get()!!.container.set(this)
     }
 
     override fun enter(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>?) {
         super.enter(prev, next, payload)
-        mSubMachine.enterState(prev, next, payload as HashMap<String?, Any?>?)
+        mSubMachine.get()!!.enterState(prev, next, payload as HashMap<String?, Any?>?)
     }
 
     override fun exit(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>?) {
-        mSubMachine.teardown(payload)
+        mSubMachine.get()!!.teardown(payload)
         super.exit(prev, next, payload)
     }
 
     override fun handleWithOverride(event: Event): Boolean {
-        return if (mSubMachine.handleWithOverride(event)) {
+        return if (mSubMachine.get()!!.handleWithOverride(event)) {
             true
         } else {
             super.handleWithOverride(event)
@@ -43,21 +44,21 @@ class Sub : State<Sub> {
     }
 
     override fun addParent(stateMachine: StateMachine) {
-        mSubMachine.addParent(stateMachine)
+        mSubMachine.get()!!.addParent(stateMachine)
     }
 
     override fun setOwner(ownerMachine: StateMachine) {
-        super.owner = IsolateState{ ownerMachine}
-        mSubMachine.name = owner!!.access { it.name }
+        super.owner.set(ownerMachine)
+        mSubMachine.get()!!.name = owner.get()!!.name
     }
 
     override val descendantStates: Collection<out State<*>>
         get() {
-            return mSubMachine.descendantStates
+            return mSubMachine.get()!!.descendantStates
         }
 
-    override val allActiveStates: List<State<*>>
+    override val allActiveStates: List<State<*>?>
         get() {
-            return mSubMachine.allActiveStates
+            return mSubMachine.get()!!.allActiveStates
         }
 }

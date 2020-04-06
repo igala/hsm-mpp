@@ -3,6 +3,7 @@ package de.artcom.hsm
 import co.touchlab.stately.collections.IsoMutableList
 import co.touchlab.stately.collections.IsoMutableMap
 import co.touchlab.stately.concurrency.AtomicReference
+import co.touchlab.stately.ensureNeverFrozen
 import co.touchlab.stately.freeze
 import co.touchlab.stately.isolate.IsolateState
 
@@ -21,10 +22,12 @@ open class State<T : State<T>>(id: String) {
 
     }
     var id: String
-    private var mOnEnterAction: IsolateState<Action>? = null
-    private var mOnExitAction: IsolateState<Action>? = null
+    private var mOnEnterAction: AtomicReference<Action?> = AtomicReference(null)
+    private var mOnExitAction: AtomicReference<Action?> = AtomicReference(null)
     private  var mHandlers: IsoMutableMap<String, IsoMutableList<Handler?>> = IsoMutableMap<String, IsoMutableList<Handler?>>()
-    internal var owner: IsolateState<StateMachine>? = null
+    internal var owner: AtomicReference<StateMachine?> = AtomicReference(null)
+    private  var logger : AtomicReference<ILogger?> = AtomicReference<ILogger?>(LOGGER)
+
     protected open fun getThis(): T
     {
             return this as T
@@ -43,11 +46,11 @@ open class State<T : State<T>>(id: String) {
 
 
     open fun setOwner(ownerMachine: StateMachine) {
-        owner = IsolateState{ownerMachine}
+        owner.set(ownerMachine)
     }
 
     open fun getOwner(): StateMachine? {
-        return owner?.access { it }
+        return owner.get()
     }
     open val descendantStates: Collection<out State<*>>
         get() {
@@ -55,9 +58,9 @@ open class State<T : State<T>>(id: String) {
         }
     val eventHandler: EventHandler
         get() {
-            return owner?.access {  it.path.get(0) as EventHandler}!!
+            return owner.get()?.path?.get(0)!!
         }
-    open val allActiveStates: List<State<*>>
+    open val allActiveStates: List<State<*>?>
         get() {
             return ArrayList<State<*>>()
         }
@@ -68,16 +71,16 @@ open class State<T : State<T>>(id: String) {
     }
 
     fun setLogger(log: ILogger) {
-        LOGGER = log
+        logger.set(log)
     }
 
     fun onEnter(onEnterAction: Action): T {
-        mOnEnterAction = IsolateState{onEnterAction}
+        mOnEnterAction.set(onEnterAction)
         return getThis()
     }
 
     fun onExit(onExitAction: Action): T {
-        mOnExitAction = IsolateState {onExitAction}
+        mOnExitAction.set(onExitAction)
         return getThis()
     }
 
@@ -138,22 +141,22 @@ open class State<T : State<T>>(id: String) {
     }
 
     open fun enter(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>?) {
-        LOGGER.debug("[" + owner?.access {  it.name } + "] " + id + " - enter")
-        if (mOnEnterAction != null) {
-            mOnEnterAction?.access {  it.setPreviousState(prev)}
-            mOnEnterAction?.access {  it.setNextState(next)}
-            mOnEnterAction?.access {  it.setPayload(payload)}
-            mOnEnterAction?.access {  it.run()}
+        LOGGER.debug("[" + owner.get()?.name  + "] " + id + " - enter")
+        if (mOnEnterAction.get() != null) {
+            mOnEnterAction.get()?.setPreviousState(prev)
+            mOnEnterAction.get()?.setNextState(next)
+            mOnEnterAction.get()?.setPayload(payload)
+            mOnEnterAction.get()?.run()
         }
     }
 
     open fun exit(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>?) {
-        LOGGER.debug("[" + owner?.access { it.name } + "] " + id + " - exit")
-        if (mOnExitAction != null) {
-            mOnExitAction?.access {  it.setPreviousState(prev)}
-            mOnExitAction?.access {  it.setNextState(next)}
-            mOnExitAction?.access {  it.setPayload(payload)}
-            mOnExitAction?.access {  it.run()}
+        LOGGER.debug("[" + owner.get()?.name  + "] " + id + " - exit")
+        if (mOnExitAction.get() != null) {
+            mOnExitAction.get()?.setPreviousState(prev)
+            mOnExitAction.get()?.setNextState(next)
+            mOnExitAction.get()?.setPayload(payload)
+            mOnExitAction.get()?.run()
         }
     }
 
@@ -169,8 +172,8 @@ open class State<T : State<T>>(id: String) {
     open fun handleWithOverride(event: Event): Boolean {
         val handler = findHandler(event)
         if (handler != null) {
-            LOGGER.debug("[" + owner?.access { it.name } + "] " + id + " - handle Event: " + event.name)
-            owner?.access { it.executeHandler(handler, event)}
+            LOGGER.debug("[" + owner.get()?.name + "] " + id + " - handle Event: " + event.name)
+            owner.get()?.executeHandler(handler, event)
             return true
         }
         return false

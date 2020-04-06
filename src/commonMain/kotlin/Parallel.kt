@@ -1,13 +1,15 @@
 package de.artcom.hsm
 
+import co.touchlab.stately.collections.IsoMutableList
+
 //import java.util.*
 
 class Parallel(id: String?, vararg stateMachines: StateMachine?) : State<Parallel>(id!!) {
-    private var mStateMachineList: List<StateMachine>? = null
+    private var mStateMachineList: IsoMutableList<StateMachine> = IsoMutableList()
     fun setStateMachineList(stateMachineList: List<StateMachine>?) {
-        mStateMachineList = stateMachineList
+        mStateMachineList.addAll(stateMachineList!!.toList() as Collection<StateMachine>)
         for (stateMachine in mStateMachineList!!) {
-            stateMachine.container = this
+            stateMachine.container.set(this)
         }
     }
 
@@ -70,10 +72,10 @@ class Parallel(id: String?, vararg stateMachines: StateMachine?) : State<Paralle
         return descendantStates
     }
 
-   override val allActiveStates: List<State<*>>
+   override val allActiveStates: List<State<*>?>
         get(){
-        val stateList: MutableList<State<*>> = ArrayList()
-        for (stateMachine in mStateMachineList!!) {
+        val stateList: MutableList<State<*>?> = ArrayList()
+        for (stateMachine in mStateMachineList) {
             stateList.addAll(stateMachine.allActiveStates)
         }
         return stateList

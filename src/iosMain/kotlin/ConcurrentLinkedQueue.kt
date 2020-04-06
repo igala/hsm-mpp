@@ -5,7 +5,7 @@ actual class ConcurrentLinkedQueue<E>{
     private lateinit var lock: NSRecursiveLock
     lateinit var queue:MutableList<E>
     init {
-        queue = mutableListOf<E>() as MutableList<E>
+        queue = mutableListOf<E>()
         lock = NSRecursiveLock()
     }
     actual open fun add(element:E):Boolean{
