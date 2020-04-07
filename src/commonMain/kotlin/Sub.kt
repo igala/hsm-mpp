@@ -21,12 +21,12 @@ class Sub : State<Sub> {
         mSubMachine.get()!!.container.set(this)
     }
 
-    override fun enter(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>?) {
+    override fun enter(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>) {
         super.enter(prev, next, payload)
-        mSubMachine.get()!!.enterState(prev, next, payload as HashMap<String?, Any?>?)
+        mSubMachine.get()!!.enterState(prev, next, payload as HashMap<String?, Any?>)
     }
 
-    override fun exit(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>?) {
+    override fun exit(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>) {
         mSubMachine.get()!!.teardown(payload)
         super.exit(prev, next, payload)
     }

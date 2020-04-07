@@ -1,18 +1,21 @@
 package de.artcom.hsm
 
+import co.touchlab.stately.collections.IsoMutableMap
+import co.touchlab.stately.concurrency.AtomicReference
+
 abstract class Action() {
-    protected var mPreviousState: State<*>? = null
-    protected var mNextState: State<*>? = null
+    protected var mPreviousState: AtomicReference<State<*>?> = AtomicReference(null)
+    protected var mNextState: AtomicReference<State<*>?> = AtomicReference(null)
 
     protected var mPayload: MutableMap<String?, Any?>? = null
 
     abstract fun run()
     fun setPreviousState(state: State<*>?) {
-        mPreviousState = state
+        mPreviousState = AtomicReference(state)
     }
 
     fun setNextState(state: State<*>?) {
-        mNextState = state
+        mNextState = AtomicReference(state)
     }
 
     fun setPayload(payload: Map<String?, Any?>?) {

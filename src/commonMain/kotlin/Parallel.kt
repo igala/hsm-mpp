@@ -17,14 +17,14 @@ class Parallel(id: String?, vararg stateMachines: StateMachine?) : State<Paralle
         return this
     }
 
-    override fun enter(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>?) {
+    override fun enter(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>) {
         super.enter(prev, next, payload)
         for (stateMachine in mStateMachineList!!) {
-            stateMachine.enterState(prev, next, payload as HashMap<String?, Any?>?)
+            stateMachine.enterState(prev, next, payload as HashMap<String?, Any?>)
         }
     }
 
-    override fun exit(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>?) {
+    override fun exit(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>) {
         super.exit(prev, next, payload)
         for (stateMachine in mStateMachineList!!) {
             stateMachine.teardown(payload)

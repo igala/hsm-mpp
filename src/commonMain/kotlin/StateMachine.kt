@@ -124,7 +124,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
         handleEvent(event, HashMap<String?, Any>())
     }
 
-    override fun handleEvent(eventName: String?, payload: Map<String?, out Any?>?) {
+    override fun handleEvent(eventName: String?, payload: Map<String?, out Any?>) {
         if (mCurrentState.get() == null) {
             return // TODO: throw an exception here
         }
@@ -141,7 +141,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
         while (mEventQueue.get().peek() != null) {
             val event = mEventQueue.get().poll()
             if (!mCurrentState.get()?.handleWithOverride(event)!!) {
-                LOGGER.debug(name.get() + " nobody handled event: " + event.name)
+                logger.get()?.debug(name.get() + " nobody handled event: " + event.name)
             }
         }
         mEventQueueInProgress.value = false
@@ -156,20 +156,20 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
     }
 
     internal fun executeHandler(handler: Handler, event: Event) {
-        LOGGER.debug(name.get() + " execute handler for event: " + event.name)
+        logger.get()?.debug(name.get() + " execute handler for event: " + event.name)
         val action = handler.action
         val targetState = handler.targetState
         if (targetState == null) {
             throw IllegalStateException(name.get() + " cant find target state for transition " + event.name)
         }
-        when (handler.kind) {
-            TransitionKind.External -> doExternalTransition(mCurrentState.get(), targetState, action, event)
-            TransitionKind.Local -> doLocalTransition(mCurrentState.get(), targetState, action, event)
-            TransitionKind.Internal -> executeAction(action, mCurrentState.get(), targetState, event.payload)
+        when (handler.kind.get()) {
+            TransitionKind.External -> doExternalTransition(mCurrentState.get(), targetState.get(), action.get(), event)
+            TransitionKind.Local -> doLocalTransition(mCurrentState.get(), targetState.get(), action.get(), event)
+            TransitionKind.Internal -> executeAction(action.get(), mCurrentState.get(), targetState.get(), event.payload)
         }
     }
 
-    private fun executeAction(action: Action?, previousState: State<*>?, targetState: State<*>?, payload: Map<String?, Any?>?) {
+    private fun executeAction(action: Action?, previousState: State<*>?, targetState: State<*>?, payload: Map<String?, Any?>) {
         if (action != null) {
             action.setPreviousState(previousState)
             action.setNextState(targetState)
@@ -199,7 +199,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
         }
     }
 
-    private fun switchState(previousState: State<*>?, nextState: State<*>?, action: Action?, payload: Map<String?, Any?>?) {
+    private fun switchState(previousState: State<*>?, nextState: State<*>?, action: Action?, payload: Map<String?, Any?>) {
         exitState(previousState, nextState, payload)
             if (action != null) {
                     executeAction(action, previousState, nextState, payload)
@@ -207,7 +207,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
         enterState(previousState, nextState, payload)
     }
 
-    internal fun enterState(previousState: State<*>?, targetState: State<*>?, payload: Map<String?, Any?>?) {
+    internal fun enterState(previousState: State<*>?, targetState: State<*>?, payload: Map<String?, Any?>) {
         val targetLevel = targetState?.owner?.get()?.path?.size
         val localLevel = path.size!!
         var nextState: State<*>? = null
@@ -238,13 +238,13 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
         return targetOwner?.get()?.path!!.get(localLevel)
     }
 
-    private fun exitState(previousState: State<*>?, nextState: State<*>?, payload: Map<String?, Any?>?) {
+    private fun exitState(previousState: State<*>?, nextState: State<*>?, payload: Map<String?, Any?>) {
         mCurrentState.get()?.exit(previousState, nextState, payload)
     }
 
     private fun setOwner() {
         for (state in mStateList) {
-            state.owner.set(this)
+            state.setOwner(this)
         }
     }
 

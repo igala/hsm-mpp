@@ -1,12 +1,12 @@
 package de.artcom.hsm
 import platform.Foundation.NSRecursiveLock
-
+import co.touchlab.stately.collections.IsoMutableList
 actual class ConcurrentLinkedQueue<E>{
-    private lateinit var lock: NSRecursiveLock
-    lateinit var queue:MutableList<E>
+    private  var lock: NSRecursiveLock = NSRecursiveLock()
+    var queue:IsoMutableList<E>
     init {
-        queue = mutableListOf<E>()
-        lock = NSRecursiveLock()
+//        queue = IsoMutableMap<E>()
+        queue = IsoMutableList<E>()
     }
     actual open fun add(element:E):Boolean{
 
@@ -15,11 +15,15 @@ actual class ConcurrentLinkedQueue<E>{
         lock.unlock()
         return true
     }
-    actual fun peek():E{
+    actual fun peek():E?{
         lock.lock()
-        var peek:E= queue.get(0)
-        lock.unlock()
-        return peek
+        if(queue.isEmpty())
+            return null
+        else {
+            var peek: E = queue.get(0)
+            lock.unlock()
+            return peek
+        }
     }
     actual fun poll():E{
         lock.lock()
