@@ -11,11 +11,18 @@ abstract class Action() {
 
     abstract fun run()
     fun setPreviousState(state: State<*>?) {
-        mPreviousState = AtomicReference(state)
+        if(mPreviousState==null)
+            mPreviousState = AtomicReference(state)
+        else
+            mPreviousState.set(state)
     }
 
     fun setNextState(state: State<*>?) {
-        mNextState = AtomicReference(state)
+        if(mNextState==null)
+            mNextState = AtomicReference(state)
+        else
+            mNextState.set(state)
+
     }
 
     fun setPayload(payload: Map<String?, Any?>?) {
