@@ -49,7 +49,7 @@ class Sub : State<Sub> {
 
     override fun setOwner(ownerMachine: StateMachine) {
         super.owner.set(ownerMachine)
-        mSubMachine.get()!!.name = owner.get()!!.name
+        mSubMachine.get()!!.name.set(owner.get()!!.name.get())
     }
 
     override val descendantStates: Collection<out State<*>>
