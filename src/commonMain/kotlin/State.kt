@@ -141,7 +141,7 @@ open class State<T : State<T>>(id: String) {
     }
 
     open fun enter(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>) {
-        logger.get()?.debug("[" + owner.get()?.name  + "] " + id + " - enter")
+        logger.get()?.debug("[" + owner.get()?.name!!.get()  + "] " + id + " - enter")
         if (mOnEnterAction.get() != null) {
             mOnEnterAction.get()?.setPreviousState(prev)
             mOnEnterAction.get()?.setNextState(next)
@@ -151,7 +151,7 @@ open class State<T : State<T>>(id: String) {
     }
 
     open fun exit(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>) {
-        logger.get()?.debug("[" + owner.get()?.name  + "] " + id + " - exit")
+        logger.get()?.debug("[" + owner.get()?.name!!.get()  + "] " + id + " - exit")
         if (mOnExitAction.get() != null) {
             mOnExitAction.get()?.setPreviousState(prev)
             mOnExitAction.get()?.setNextState(next)
@@ -172,7 +172,7 @@ open class State<T : State<T>>(id: String) {
     open fun handleWithOverride(event: Event): Boolean {
         val handler = findHandler(event)
         if (handler != null) {
-            logger.get()?.debug("[" + owner.get()?.name + "] " + id + " - handle Event: " + event.name)
+            logger.get()?.debug("[" + owner.get()?.name!!.get() + "] " + id + " - handle Event: " + event.name)
             owner.get()?.executeHandler(handler, event)
             return true
         }

@@ -2,30 +2,17 @@ package de.artcom.hsm
 
 import co.touchlab.stately.collections.IsoMutableMap
 import co.touchlab.stately.concurrency.AtomicReference
+import co.touchlab.stately.concurrency.value
+import kotlin.math.atan
 
-abstract class Action() {
-    protected var mPreviousState: AtomicReference<State<*>?> = AtomicReference(null)
-    protected var mNextState: AtomicReference<State<*>?> = AtomicReference(null)
+expect abstract class Action() {
 
-    protected var mPayload: MutableMap<String?, Any?>? = null
 
     abstract fun run()
-    fun setPreviousState(state: State<*>?) {
-        if(mPreviousState==null)
-            mPreviousState = AtomicReference(state)
-        else
-            mPreviousState.set(state)
-    }
+    fun setPreviousState(state: State<*>?)
 
-    fun setNextState(state: State<*>?) {
-        if(mNextState==null)
-            mNextState = AtomicReference(state)
-        else
-            mNextState.set(state)
+    fun setNextState(state: State<*>?)
 
-    }
+    fun setPayload(payload: Map<String?, Any?>?)
 
-    fun setPayload(payload: Map<String?, Any?>?) {
-        mPayload = payload as MutableMap<String?, Any?>
-    }
 }

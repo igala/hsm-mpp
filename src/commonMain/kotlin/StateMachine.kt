@@ -106,7 +106,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
     }
 
     internal fun teardown(payload: Map<String?, Any?>?) {
-        LOGGER.debug(name.get() + " teardown")
+        logger.get()?.debug(name.get() + " teardown")
         if (payload == null) {
                 exitState(mCurrentState.get(), null, HashMap<String?, Any?>())
         }
@@ -124,7 +124,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
         handleEvent(event, HashMap<String?, Any>())
     }
 
-    override fun handleEvent(eventName: String?, payload: Map<String?, out Any?>) {
+    override fun handleEvent(eventName: String?, payload: Map<String?, Any?>) {
         if (mCurrentState.get() == null) {
             return // TODO: throw an exception here
         }
@@ -208,7 +208,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
     }
 
     internal fun enterState(previousState: State<*>?, targetState: State<*>?, payload: Map<String?, Any?>) {
-        val targetLevel = targetState?.owner?.get()?.path?.size
+        val targetLevel = targetState?.getOwner()?.path?.size
         val localLevel = path.size!!
         var nextState: State<*>? = null
             if (targetLevel != null) {
@@ -223,7 +223,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
         if (mStateList.contains(nextState)) {
             mCurrentState.set(nextState)
         } else {
-            mCurrentState = mInitialState
+            mCurrentState.set(mInitialState.get())
         }
         mCurrentState.get()?.enter(previousState, targetState, payload)
     }
@@ -234,8 +234,8 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
 
     private fun findNextStateMachineOnPathTo(targetState: State<*>?): StateMachine {
         val localLevel = path.size
-        val targetOwner = targetState?.owner
-        return targetOwner?.get()?.path!!.get(localLevel)
+        val targetOwner = targetState?.getOwner()
+        return targetOwner?.path!!.get(localLevel)
     }
 
     private fun exitState(previousState: State<*>?, nextState: State<*>?, payload: Map<String?, Any?>) {
@@ -249,7 +249,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
     }
 
     public override fun toString(): String {
-        if (mCurrentState == null) {
+        if (mCurrentState.get() == null) {
             return mInitialState.toString()
         }
         return mCurrentState.toString()
@@ -263,10 +263,10 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
     }
 
     private fun findLowestCommonAncestor(targetState: State<*>?): StateMachine {
-        if (targetState?.owner?.get() == null) {
+        if (targetState?.getOwner() == null) {
             throw IllegalStateException(name.get() + " Target state '" + targetState?.id + "' is not contained in state machine model.")
         }
-        val targetPath = targetState.owner.get()?.path
+        val targetPath = targetState.getOwner()?.path
         val size = path.size
         for (i in 1 until size) {
             try {
