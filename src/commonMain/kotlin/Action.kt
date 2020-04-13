@@ -15,4 +15,6 @@ expect abstract class Action() {
 
     fun setPayload(payload: Map<String?, Any?>?)
 
+    fun getPayload():Map<String?, Any?>?
+
 }

@@ -27,5 +27,9 @@ actual abstract class Action actual constructor() {
             mPayload = payload as MutableMap<String?, Any?>
     }
 
+    actual fun getPayload(): Map<String?, Any?>? {
+       return mPayload
+    }
+
 
 }
