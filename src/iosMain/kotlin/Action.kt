@@ -27,7 +27,7 @@ actual abstract class Action actual constructor() {
 
     actual fun setPayload(payload: Map<String?, Any?>?) {
 
-            mPayload.value?.putAll(payload as MutableMap<String?, Any?>)
+            mPayload.value = payload as MutableMap<String?, Any?>
     }
 
     actual fun getPayload(): Map<String?, Any?>? {
