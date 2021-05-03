@@ -1,8 +1,21 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.21.0"
+    }
+}
+
 plugins {
     id 'org.jetbrains.kotlin.multiplatform' version '1.4.10'
     id "base"
     id "maven-publish"
-    id "com.jfrog.bintray" version "1.8.4"
+    id 'com.jfrog.artifactory' version '4.6.2'
+
+    //id "com.jfrog.bintray" version "1.8.4"
 }
 repositories {
     jcenter()
@@ -10,13 +23,19 @@ repositories {
     maven {
         url "https://plugins.gradle.org/m2/"
     }
+    maven {
+        name "artifactory"
+        delegate.url("http://repo.jfrog.org/artifactory/gradle-plugins")
+    }
 
 
 }
 
 
+apply plugin: "com.jfrog.artifactory"
+
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
+//apply plugin: 'com.jfrog.bintray'
 
 def GROUP_ID='de.artcom.hsm' // Your orginization in reverse domain notation. For example:  def GROUP_ID="com.fudge"
 def ARTIFACT_ID="hsm-mpp-lib" // The name you gave your package in bintray. In our example it would be:  def ARTIFACT_ID="kotlin-awesome-printer"
@@ -27,7 +46,7 @@ def BINTRAY_REPOSITORY='hsm-mpp-lib' // What you named your repository in bintra
 def ISSUE_URL= 'https://github.com/igala/hsm-mpp'// A link to an issue tracker for the library, in our example: "https://github.com/natanfudge/KotlinAwesomePrinter/issues"
 def SITE_URL='https://github.com/igala/hsm-mpp' // A link to the library's site. In our example: "https://github.com/natanfudge/KotlinAwesomePrinter"
 def VCS_URL='https://github.com/igala/hsm-mpp' // A link to the version control system (where the code is stored). In our example: "https://github.com/natanfudge/KotlinAwesomePrinter.git"
-def LIBRARY_VERSION_NAME='1.0.30' // The current version of your library. You will need to update this value whenever you upload a new release. For example: 1.0
+def LIBRARY_VERSION_NAME='1.0.30.5' // The current version of your library. You will need to update this value whenever you upload a new release. For example: 1.0
 
 
 
@@ -45,7 +64,17 @@ kotlin {
         }
     }
 
-
+//    def publicationsFromMainHost =
+//            [jvm(), ios()].collect { it.toString() } + "kotlinMultiplatform"
+//    publishing {
+//        publications {
+//            matching { it.name in publicationsFromMainHost }.all { targetPublication ->
+//                tasks.withType(AbstractPublishToMaven)
+//                        .matching { it.publication == targetPublication }
+//                        .configureEach { onlyIf { findProperty("isMainHost") == "true" } }
+//            }
+//        }
+//    }
 
 
     sourceSets {
@@ -98,6 +127,8 @@ kotlin {
         iosTest {
 
         }
+
+
     }
 
 //    getByName("iosArm64Main") { dependsOn(iosMain) }
@@ -143,46 +174,105 @@ def getBintrayUserProperty() {
 def getBintrayApiKeyProperty() {
     return hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
 }
+//
+//publishing {
+//    repositories {
+//        maven {
+//            // change to point to your repo, e.g. http://my.org/repo
+//            url = "http://52.23.100.97:8081/artifactory"
+//            credentials{
+//                username getBintrayUserProperty()
+//                password getBintrayApiKeyProperty()
+//
+//
+//            }
+//
+//        }
+//    }
+//}
 
-bintray {
-    //A user name of bintray to A, and API key of Bintray to B.I do not want to include API Key in git,
-    // so I am gradle.properties writing locally.
-    // Gradle's property file is read in the order of gradle in the home directory> gradle in the project directory,
-    // so if it is written in property in the home directory, it will be useful for other projects as well.
-    user = getBintrayUserProperty()
-    key = getBintrayApiKeyProperty()
-    //f you set publish to true, the new version will be published the moment you upload to bintray. If false, it will not be published unless you press the publish button on the bintray web.
-    // It is recommended that you make it false because it can prevent an accident that you accidentally release the latest version.
-    publish = true
+artifactoryPublish {
+    publications ('ALL_PUBLICATIONS')
+}
+artifactory {
+    contextUrl = 'http://52.23.100.97:8081/artifactory/'
+    clientConfig.setIncludeEnvVars(true)
+    publish {
+        repository {
+            repoKey = 'de.artcom.hsm'
+            username = getBintrayUserProperty()
+            password = getBintrayApiKeyProperty()
+        }
+        defaults {
 
-    pkg {
-        repo = BINTRAY_REPOSITORY
-        name = ARTIFACT_ID
-        //userOrg = BINTRAY_ORGINIZATION
-        licenses = ['MIT']
-        vcsUrl = VCS_URL
-        websiteUrl = SITE_URL
-        issueTrackerUrl = ISSUE_URL
+            publications ('ALL_PUBLICATIONS')
+            publishBuildInfo = true   //Publish build-info to Artifactory (true by default)
+            publishArtifacts = true   //Publish artifacts to Artifactory (true by default)
+            publishPom = true   //Publish generated POM files to Artifactory (true by default).
+//            delegateClosureOf<groovy.lang.GroovyObject> {
+//                invokeMethod("publications", arrayOf(
+//                        "androidDebug", "androidRelease", "ios", "iosArm64", "kotlinMultiplatform", "metadata"
+//                ))}}
+        }
+        groupId GROUP_ID
+        artifactId ARTIFACT_ID
+
+
+//        licenses = ['MIT']
+//        vcsUrl = VCS_URL
+//        websiteUrl = SITE_URL
+//        issueTrackerUrl = ISSUE_URL
 
         version {
             name = LIBRARY_VERSION_NAME
             vcsTag = LIBRARY_VERSION_NAME
             released = new Date()
         }
+
+
     }
+//    resolve {
+//        repoKey = 'de.artcom.hsm'
+//    }
+    clientConfig.info.setBuildNumber(LIBRARY_VERSION_NAME)
 }
+//bintray {
+//    //A user name of bintray to A, and API key of Bintray to B.I do not want to include API Key in git,
+//    // so I am gradle.properties writing locally.
+//    // Gradle's property file is read in the order of gradle in the home directory> gradle in the project directory,
+//    // so if it is written in property in the home directory, it will be useful for other projects as well.
+//    user = getBintrayUserProperty()
+//    key = getBintrayApiKeyProperty()
+//    //f you set publish to true, the new version will be published the moment you upload to bintray. If false, it will not be published unless you press the publish button on the bintray web.
+//    // It is recommended that you make it false because it can prevent an accident that you accidentally release the latest version.
+//    publish = true
+//
+//    pkg {
+//        repo = BINTRAY_REPOSITORY
+//        name = ARTIFACT_ID
+//        //userOrg = BINTRAY_ORGINIZATION
+//        licenses = ['MIT']
+//        vcsUrl = VCS_URL
+//        websiteUrl = SITE_URL
+//        issueTrackerUrl = ISSUE_URL
+//
+//        version {
+//            name = LIBRARY_VERSION_NAME
+//            vcsTag = LIBRARY_VERSION_NAME
+//            released = new Date()
+//        }
+//    }
+//}
 
 // This specifies the publications to upload to bintray before doing the bintrayUpload gradle task.
 //In the mpp configuration of one module after 1.3,
 // it is not uploaded unless you explicitly specify artifacts in publications like this.
 // It is not necessary to have the findAll part,
 // [project name]-kotlinMultiplatformbut a directory containing only pom files will be uploaded, so it is better to exclude it.
-bintrayUpload.doFirst {
-    publications = publishing.publications.collect {
-        it.name
-    }.findAll {
-        it != "kotlinMultiplatform"
-    }
-}
-
-
+//artifactoryDeploy.doFirst {
+//    publications = publishing.publications.collect {
+//        it.name
+//    }.findAll {
+//        it != "kotlinMultiplatform"
+//    }
+//}
