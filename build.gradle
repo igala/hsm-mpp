@@ -10,7 +10,7 @@ buildscript {
 }
 
 plugins {
-    id 'org.jetbrains.kotlin.multiplatform' version '1.4.10'
+    id 'org.jetbrains.kotlin.multiplatform' version '1.6.20'
     id "base"
     id "maven-publish"
     id 'com.jfrog.artifactory' version '4.6.2'
@@ -46,7 +46,7 @@ def BINTRAY_REPOSITORY='hsm-mpp-lib' // What you named your repository in bintra
 def ISSUE_URL= 'https://github.com/igala/hsm-mpp'// A link to an issue tracker for the library, in our example: "https://github.com/natanfudge/KotlinAwesomePrinter/issues"
 def SITE_URL='https://github.com/igala/hsm-mpp' // A link to the library's site. In our example: "https://github.com/natanfudge/KotlinAwesomePrinter"
 def VCS_URL='https://github.com/igala/hsm-mpp' // A link to the version control system (where the code is stored). In our example: "https://github.com/natanfudge/KotlinAwesomePrinter.git"
-def LIBRARY_VERSION_NAME='1.0.30.5' // The current version of your library. You will need to update this value whenever you upload a new release. For example: 1.0
+def LIBRARY_VERSION_NAME='1.1.2.0' // The current version of your library. You will need to update this value whenever you upload a new release. For example: 1.0
 
 
 
@@ -58,7 +58,7 @@ kotlin {
     jvm()
     // This is for iPhone emulator
     // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
-    ios {
+    iosArm64 {
         binaries {
             framework()
         }
@@ -81,10 +81,10 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-                implementation 'co.touchlab:stately-concurrency:1.1.1'
-                implementation 'co.touchlab:stately-common:1.1.1'
-                implementation 'co.touchlab:stately-isolate:1.1.1-a1'
-                implementation 'co.touchlab:stately-iso-collections:1.1.1-a1'
+                implementation 'co.touchlab:stately-concurrency:1.2.1'
+                implementation 'co.touchlab:stately-common:1.2.1'
+                implementation 'co.touchlab:stately-isolate:1.2.1'
+                implementation 'co.touchlab:stately-iso-collections:1.2.1'
             }
         }
         commonTest {
@@ -120,7 +120,7 @@ kotlin {
                 implementation 'org.mockito:mockito-core:1.10.8'
             }
         }
-        iosMain {
+        iosArm64Main {
 
         }
 
@@ -149,6 +149,8 @@ kotlin {
 //        }
 //    }
 //}
+
+
 
 
 configurations {

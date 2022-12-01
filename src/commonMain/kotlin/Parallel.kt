@@ -8,7 +8,7 @@ class Parallel(id: String?, vararg stateMachines: StateMachine?) : State<Paralle
     private var mStateMachineList: IsoMutableList<StateMachine> = IsoMutableList()
     fun setStateMachineList(stateMachineList: List<StateMachine>?) {
         mStateMachineList.addAll(stateMachineList!!.toList() as Collection<StateMachine>)
-        for (stateMachine in mStateMachineList!!) {
+        for (stateMachine in mStateMachineList) {
             stateMachine.container.set(this)
         }
     }
@@ -19,21 +19,21 @@ class Parallel(id: String?, vararg stateMachines: StateMachine?) : State<Paralle
 
     override fun enter(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>) {
         super.enter(prev, next, payload)
-        for (stateMachine in mStateMachineList!!) {
+        for (stateMachine in mStateMachineList) {
             stateMachine.enterState(prev, next, payload as HashMap<String?, Any?>)
         }
     }
 
     override fun exit(prev: State<*>?, next: State<*>?, payload: Map<String?, Any?>) {
         super.exit(prev, next, payload)
-        for (stateMachine in mStateMachineList!!) {
+        for (stateMachine in mStateMachineList) {
             stateMachine.teardown(payload)
         }
     }
 
     override fun handleWithOverride(event: Event): Boolean {
         var isHandled = false
-        for (stateMachine in mStateMachineList!!) {
+        for (stateMachine in mStateMachineList) {
             if (stateMachine.handleWithOverride(event)) {
                 isHandled = true
             }
@@ -47,7 +47,7 @@ class Parallel(id: String?, vararg stateMachines: StateMachine?) : State<Paralle
         val sb = StringBuilder()
         sb.append(id)
         sb.append("/(")
-        for (stateMachine in mStateMachineList!!) {
+        for (stateMachine in mStateMachineList) {
             sb.append(stateMachine.toString())
             sb.append('|')
         }
@@ -58,7 +58,7 @@ class Parallel(id: String?, vararg stateMachines: StateMachine?) : State<Paralle
     }
 
     override fun addParent(stateMachine: StateMachine) {
-        for (machine in mStateMachineList!!) {
+        for (machine in mStateMachineList) {
             machine.addParent(stateMachine)
         }
     }
@@ -66,7 +66,7 @@ class Parallel(id: String?, vararg stateMachines: StateMachine?) : State<Paralle
       override val descendantStates: Collection<out State<*>>
           get() {
         val descendantStates: MutableList<State<*>> = ArrayList()
-        for (stateMachine in mStateMachineList!!) {
+        for (stateMachine in mStateMachineList) {
             descendantStates.addAll(stateMachine.descendantStates)
         }
         return descendantStates

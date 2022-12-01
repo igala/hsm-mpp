@@ -149,7 +149,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
 
     internal fun handleWithOverride(event: Event): Boolean {
         if (mCurrentState.get() != null) {
-            return mCurrentState!!.get()!!.handleWithOverride(event)
+            return mCurrentState.get()!!.handleWithOverride(event)
         } else {
             return false
         }
@@ -189,7 +189,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
             stateMachine.switchState(previousState, targetState, action, event.payload)
         } else if (targetState?.descendantStates!!.contains(previousState)) {
             val targetLevel = targetState.owner.get()?.path!!.size
-            val stateMachine = path.get(targetLevel!!)
+            val stateMachine = path.get(targetLevel)
             stateMachine.switchState(previousState, targetState, action, event.payload)
         } else if (previousState.equals(targetState)) {
             //TODO: clarify desired behavior for local transition on self
@@ -209,7 +209,7 @@ class StateMachine(initialState: State<*>?, vararg states: State<*>?) : EventHan
 
     internal fun enterState(previousState: State<*>?, targetState: State<*>?, payload: Map<String?, Any?>) {
         val targetLevel = targetState?.getOwner()?.path?.size
-        val localLevel = path.size!!
+        val localLevel = path.size
         var nextState: State<*>? = null
             if (targetLevel != null) {
                     if (targetLevel < localLevel) {
