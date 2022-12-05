@@ -1,3 +1,19 @@
+pluginManagement {
+    repositories {
+        maven {
+            name 'Artifactory'
+            url 'https://test-085040411863.d.codeartifact.us-east-1.amazonaws.com/maven/Artifactory/'
+            credentials {
+                username 'aws'
+                password "$codeartifactToken"
+            }
+        }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+}
+
 rootProject.name = 'hsm-mpp-lib'
 
 
